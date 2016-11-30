@@ -17,6 +17,13 @@ namespace std {
     };
 }
 
+namespace std {
+    std::ostream & operator<<(std::ostream & os, const pos & p) {
+        os << "(" << p.first << "," << p.second << ")";
+        return os;
+    }
+}
+
 class solution {
 public:
     void solve(std::vector<std::string> & board) {
@@ -49,6 +56,8 @@ private:
 	    std::unordered_set<pos> region = grow(std::unordered_set<pos>{*it}, holes);
 	    for (auto ite = region.begin(); ite != region.end(); ite++)
 		holes.erase(*ite);
+            std::copy(region.begin(), region.end(), std::ostream_iterator<pos>(std::cout, " "));
+            std::cout << std::endl;
 	    if (isRegionSurrounded(board, region))
 		regions.push_back(region);
 	}
@@ -69,7 +78,9 @@ private:
 	if (adj.empty())
 	    result = curr;
 	else {
-	    auto temp = grow(adj, holes);
+            auto cpy = curr;
+            std::copy(adj.begin(), adj.end(), std::inserter(cpy, cpy.end()));
+	    auto temp = grow(cpy, holes);
 	    std::copy(temp.begin(), temp.end(), std::inserter(result, result.end()));
 	}
 	return result;
